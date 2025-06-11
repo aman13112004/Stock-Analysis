@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stock Analysis</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Stock Analysis Tool</h1>
+
+        <form method="POST">
+            <label for="stock">Enter Stock Name:</label>
+            <input type="text" name="stock" required>
+            <input type="submit" value="Analyze">
+        </form>
+
+        {% if result %}
+            {% if result.error %}
+                <p>{{ result.error }}</p>
+            {% else %}
+                <h2>Analysis for {{ result.stock }}</h2>
+
+                <h3>Volatility: {{ result.volatility | round(4) }}</h3>
+                <h3>Mean Squared Error: {{ result.mse | round(4) }}</h3>
+                <h3>R² Score: {{ result.r2 | round(4) }}</h3>
+
+                <h3>Predicted Prices for Next 3 Days:</h3>
+                <ul>
+                    {% for price in result.future_prices %}
+                        <li>₹{{ price | round(2) }}</li>
+                    {% endfor %}
+                </ul>
+
+                <h3>Price Over Time</h3>
+                <img src="data:image/png;base64,{{ result.price_plot }}"/>
+
+                <h3>Return Distribution</h3>
+                <img src="data:image/png;base64,{{ result.return_plot }}"/>
+
+                <h3>Moving Averages</h3>
+                <img src="data:image/png;base64,{{ result.ma_plot }}"/>
+
+                <h3>Prediction Chart</h3>
+                <img src="data:image/png;base64,{{ result.prediction_plot }}"/>
+            {% endif %}
+        {% endif %}
+    </div>
+</body>
+</html>
